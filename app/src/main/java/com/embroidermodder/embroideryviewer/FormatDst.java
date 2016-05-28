@@ -22,7 +22,9 @@ public class FormatDst implements IFormatReader {
     public Pattern Read(DataInputStream stream) {
         Pattern p = new Pattern();
         byte[] b = new byte[3];
+
         try {
+            stream.skip(0x200);
             while (stream.read(b) == 3) {
                 int x = 0;
                 int y = 0;

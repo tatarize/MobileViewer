@@ -1,5 +1,7 @@
 package com.embroidermodder.embroideryviewer;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Pattern {
@@ -59,6 +61,8 @@ public class Pattern {
         if(this._currentStitchBlock == null){
             if(_stitchBlocks.size() == 0){
                 this._currentStitchBlock = new StitchBlock();
+                this._currentStitchBlock.setThread(new EmbThread());
+                this._threadList.add(this._currentStitchBlock.getThread());
                 _stitchBlocks.add(this._currentStitchBlock);
             } else {
                 this._currentStitchBlock = this._stitchBlocks.get(0);
@@ -77,17 +81,33 @@ public class Pattern {
                 return;
             }
             if (isAutoColorIndex) {
-                this._threadList.get(this._threadList.indexOf(this._currentStitchBlock) + 1);
+                int currIndex = this._threadList.indexOf(this._currentStitchBlock);
+                if(currIndex > this._threadList.size()) {
+                    this._threadList.add(new EmbThread());
+                }
+                this._threadList.get(currIndex + 1);
             }
         }
         Stitch s = new Stitch(x, y);
         this._currentStitchBlock.getStitches().add(s);
+        Log.d("asdf", s.x + "," + s.y + "\n");
+
     }
 
     // AddStitchRel adds a stitch to the pattern at the relative position (dx, dy)
 // to the previous stitch. Positive y is up. Units are in millimeters.
     public void AddStitchRel(double dx, double dy, int flags, boolean isAutoColorIndex) {
         double x, y;
+        if(this._currentStitchBlock == null){
+            if(_stitchBlocks.size() == 0){
+                this._currentStitchBlock = new StitchBlock();
+                this._currentStitchBlock.setThread(new EmbThread());
+                this._threadList.add(this._currentStitchBlock.getThread());
+                _stitchBlocks.add(this._currentStitchBlock);
+            } else {
+                this._currentStitchBlock = this._stitchBlocks.get(0);
+            }
+        }
         ArrayList<Stitch> stitches = this._currentStitchBlock.getStitches();
         if (stitches.size() > 0) {
             Stitch lastStitch = stitches.get(stitches.size()-1);

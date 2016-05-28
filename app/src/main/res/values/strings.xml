@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Embroidery Viewer</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_open_file">Open File</string>
 </resources>

@@ -97,6 +97,6 @@ public class FormatDst implements IFormatReader {
         } catch (IOException ex) {
 
         }
-        return p;
+        return p.getFlippedPattern(false, true);
     }
 }

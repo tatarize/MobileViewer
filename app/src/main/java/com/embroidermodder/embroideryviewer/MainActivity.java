@@ -2,26 +2,18 @@ package com.embroidermodder.embroideryviewer;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,22 +29,23 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        Log.d("asdf", "HERE");
-        // Read intent to find out URL in order to read from the web
-
+        if(intent != null && intent.getAction() == "android.intent.action.VIEW"){
+            // download and display file pointed to by "intent.getData()
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        if(fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     Uri uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
                     intent.setDataAndType(uri, "*/*");
                     startActivityForResult(Intent.createChooser(intent, "Open folder"), SELECT_FILE);
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override
@@ -94,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_FILE)
+            if (requestCode == SELECT_FILE) {
                 onSelectFromGalleryResult(data);
+            }
         }
     }
 
@@ -105,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             InputStream is = getContentResolver().openInputStream(data.getData());
             DataInputStream in = new DataInputStream(is);
             Pattern p = dst.Read(in);
-            Log.d("asdf", p.getStitchBlocks().size() + "");
+            // Display drawing of embroidery Pattern "p" here
         }
         catch (FileNotFoundException ex){
 

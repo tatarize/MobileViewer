@@ -5,6 +5,16 @@ public class EmbThread {
     private String description;
     private String catalogNumber;
 
+    public EmbThread(){
+
+    }
+
+    public EmbThread(EmbThread toCopy){
+        this.setColor(toCopy.getColor());
+        this.setDescription(toCopy.getDescription());
+        this.setCatalogNumber(toCopy.getCatalogNumber());
+    }
+
     public void setColor(EmbColor value){
         color = value;
     }

@@ -169,14 +169,36 @@ public class Pattern {
             for(Stitch s : sb.getStitches()) {
                 top = Math.min(top, s.y);
                 left = Math.min(left, s.x);
-                bottom = Math.min(bottom, s.y);
-                right = Math.min(right, s.x);
+                bottom = Math.max(bottom, s.y);
+                right = Math.max(right, s.x);
             }
         }
         return new EmbRect(top, left, bottom, right);
     }
 
     public Pattern getPositiveCoordinatePattern() {
+        int moveLeft, moveTop;
+        EmbRect boundingRect = this.calculateBoundingBox();
+        moveLeft = (int)boundingRect.left;
+        moveTop = (int)boundingRect.top;
+        Pattern newPattern = new Pattern();
+        for(EmbThread thread : this._threadList){
+            newPattern._threadList.add(new EmbThread(thread));
+        }
+        for(StitchBlock sb : this.getStitchBlocks()){
+            StitchBlock newStitchBlock = new StitchBlock();
+            newPattern.getStitchBlocks().add(newStitchBlock);
+            int threadIndex = this._threadList.indexOf(sb.getThread());
+            newStitchBlock.setThread(newPattern._threadList.get(threadIndex));
+            ArrayList<Stitch> newStitches = newStitchBlock.getStitches();
+            for(Stitch s : sb.getStitches()) {
+                newStitches.add(new Stitch(s.x - moveLeft, s.y - moveTop));
+            }
+        }
+        return newPattern;
+    }
+
+    public Pattern getCenteredPattern() {
         int moveLeft, moveTop;
         EmbRect boundingRect = this.calculateBoundingBox();
         moveLeft = (int)(boundingRect.left - (boundingRect.getWidth() / 2.0));

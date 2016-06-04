@@ -2,6 +2,7 @@ package com.embroidermodder.embroideryviewer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_open_file) {
             return true;
         }
 
@@ -100,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
             DataInputStream in = new DataInputStream(is);
             Pattern p = dst.Read(in);
             // Display drawing of embroidery Pattern "p" here
+            DrawView drawView = new DrawView(this, p);
+            drawView.setBackgroundColor(Color.WHITE);
+            setContentView(drawView);
         }
         catch (FileNotFoundException ex){
 

@@ -14,34 +14,6 @@ public class Pattern {
         _currentStitchBlock = null;
     }
 
-    public static Pattern getSampleData1(){
-        Pattern p = new Pattern();
-        p.setFilename("SampleData1.dst");
-        ArrayList<StitchBlock> stitchBlocks = p.getStitchBlocks();
-        // Color 1
-        StitchBlock block = new StitchBlock();
-        EmbThread thread = new EmbThread();
-        thread.setColor(new EmbColor((byte)0,(byte)0,(byte)255));
-        thread.setDescription("Blue");
-        thread.setCatalogNumber("101");
-        block.setThread(thread);
-        ArrayList<Stitch> stitches = block.getStitches();
-        stitches.add(new Stitch(0.0, 0.0));
-        stitches.add(new Stitch(30.0, 30.0));
-        stitchBlocks.add(block);
-        // Color 2
-        block = new StitchBlock();
-        thread = new EmbThread();
-        thread.setColor(new EmbColor((byte)255,(byte)0,(byte)0));
-        thread.setDescription("Red");
-        thread.setCatalogNumber("102");
-        block.setThread(thread);
-        stitches = block.getStitches();
-        stitches.add(new Stitch(30.0, 0.0));
-        stitches.add(new Stitch(0.0, 30.0));
-        stitchBlocks.add(block);
-        return p;
-    }
 
     public ArrayList<StitchBlock> getStitchBlocks(){
         return _stitchBlocks;

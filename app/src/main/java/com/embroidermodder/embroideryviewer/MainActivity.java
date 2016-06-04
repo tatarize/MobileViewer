@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     Uri uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
                     intent.setDataAndType(uri, "*/*");
@@ -100,14 +100,12 @@ public class MainActivity extends AppCompatActivity {
             InputStream is = getContentResolver().openInputStream(data.getData());
             DataInputStream in = new DataInputStream(is);
             Pattern p = dst.Read(in);
-            // Display drawing of embroidery Pattern "p" here
             DrawView drawView = new DrawView(this, p);
-            drawView.setBackgroundColor(Color.WHITE);
-            setContentView(drawView);
+            RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.mainContentArea);
+            relativeLayout.addView(drawView);
         }
         catch (FileNotFoundException ex){
 
         }
     }
-    // http://www.theappguruz.com/blog/android-take-photo-camera-gallery-code-sample
 }

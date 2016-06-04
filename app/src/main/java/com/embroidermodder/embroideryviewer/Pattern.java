@@ -14,7 +14,6 @@ public class Pattern {
         _currentStitchBlock = null;
     }
 
-
     public ArrayList<StitchBlock> getStitchBlocks(){
         return _stitchBlocks;
     }
@@ -27,7 +26,7 @@ public class Pattern {
         _filename = value;
     }
 
-    public void AddStitchAbs(double x, double y, int flags, boolean isAutoColorIndex) {
+    public void addStitchAbs(double x, double y, int flags, boolean isAutoColorIndex) {
         if(this._currentStitchBlock == null){
             if(_stitchBlocks.size() == 0){
                 this._currentStitchBlock = new StitchBlock();
@@ -73,7 +72,7 @@ public class Pattern {
 
     // AddStitchRel adds a stitch to the pattern at the relative position (dx, dy)
     // to the previous stitch. Positive y is up. Units are in millimeters.
-    public void AddStitchRel(double dx, double dy, int flags, boolean isAutoColorIndex) {
+    public void addStitchRel(double dx, double dy, int flags, boolean isAutoColorIndex) {
         double x, y;
         if(this._currentStitchBlock == null){
             if(_stitchBlocks.size() == 0){
@@ -98,11 +97,11 @@ public class Pattern {
             x = home.x + dx;
             y = home.y + dy;
         }
-        this.AddStitchAbs(x, y, flags, isAutoColorIndex);
+        this.addStitchAbs(x, y, flags, isAutoColorIndex);
     }
 
     // ChangeColor manually changes the color index to use.
-    public void ChangeColor(byte index) {
+    public void changeColor(byte index) {
         //this._currentColorIndex = index;
     }
 

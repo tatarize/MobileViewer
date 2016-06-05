@@ -62,6 +62,6 @@ public class FormatExp implements IFormatReader {
         } catch (IOException ex) {
         }
 
-        return p;
+        return p.getFlippedPattern(false, true);
     }
 }

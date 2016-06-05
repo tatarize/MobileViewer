@@ -1,12 +1,17 @@
 package com.embroidermodder.embroideryviewer;
 
 public class EmbThread {
-    private EmbColor color;
-    private String description;
-    private String catalogNumber;
+    private EmbColor _color;
+    private String _description;
+    private String _catalogNumber;
 
     public EmbThread(){
+    }
 
+    public EmbThread(int red, int green, int blue, String description, String catalogNumber){
+        _color = new EmbColor(red, green, blue);
+        _description = description;
+        _catalogNumber = catalogNumber;
     }
 
     public EmbThread(EmbThread toCopy){
@@ -16,26 +21,24 @@ public class EmbThread {
     }
 
     public void setColor(EmbColor value){
-        color = value;
+        _color = value;
     }
 
     public EmbColor getColor(){
-        return color;
+        return _color;
     }
 
     public void setDescription(String value){
-        description = value;
+        _description = value;
     }
 
-    public String getDescription(){
-        return description;
-    }
+    public String getDescription(){ return _description; }
 
     public void setCatalogNumber(String value){
-        catalogNumber = value;
+        _catalogNumber = value;
     }
 
     public String getCatalogNumber(){
-        return catalogNumber;
+        return _catalogNumber;
     }
 }

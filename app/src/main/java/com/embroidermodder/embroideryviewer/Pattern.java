@@ -8,30 +8,37 @@ public class Pattern {
     private String _filename;
     private StitchBlock _currentStitchBlock;
 
-    public Pattern(){
+    private Stitch _previousStitch = new Stitch(0,0);
+
+    public Pattern() {
         _stitchBlocks = new ArrayList<>();
         _threadList = new ArrayList<>();
         _currentStitchBlock = null;
     }
 
-    public ArrayList<StitchBlock> getStitchBlocks(){
+    public ArrayList<StitchBlock> getStitchBlocks() {
         return _stitchBlocks;
     }
 
-    public String getFilename(){
+    public String getFilename() {
         return _filename;
     }
 
-    public void setFilename(String value){
+    public void setFilename(String value) {
         _filename = value;
     }
 
     public void addStitchAbs(double x, double y, int flags, boolean isAutoColorIndex) {
-        if(this._currentStitchBlock == null){
-            if(_stitchBlocks.size() == 0){
+        if (this._currentStitchBlock == null) {
+            if (_stitchBlocks.size() == 0) {
                 this._currentStitchBlock = new StitchBlock();
-                EmbThread thread = new EmbThread();
-                thread.setColor(EmbColor.Random());
+                EmbThread thread;
+                if (this._threadList.size() == 0) {
+                    thread = new EmbThread();
+                    thread.setColor(EmbColor.Random());
+                } else {
+                    thread = this._threadList.get(0);
+                }
                 this._currentStitchBlock.setThread(thread);
                 this._threadList.add(this._currentStitchBlock.getThread());
                 _stitchBlocks.add(this._currentStitchBlock);
@@ -54,7 +61,7 @@ public class Pattern {
             int threadIndex = 0;
             int currIndex = this._threadList.indexOf(this._currentStitchBlock.getThread());
             if (isAutoColorIndex) {
-                if((currIndex + 1) >= this._threadList.size()) {
+                if ((currIndex + 1) >= this._threadList.size()) {
                     EmbThread newThread = new EmbThread();
                     newThread.setColor(EmbColor.Random());
                     this._threadList.add(newThread);
@@ -73,30 +80,9 @@ public class Pattern {
     // AddStitchRel adds a stitch to the pattern at the relative position (dx, dy)
     // to the previous stitch. Positive y is up. Units are in millimeters.
     public void addStitchRel(double dx, double dy, int flags, boolean isAutoColorIndex) {
-        double x, y;
-        if(this._currentStitchBlock == null){
-            if(_stitchBlocks.size() == 0){
-                this._currentStitchBlock = new StitchBlock();
-                EmbThread thread = new EmbThread();
-                thread.setColor(EmbColor.Random());
-                this._currentStitchBlock.setThread(thread);
-                this._threadList.add(this._currentStitchBlock.getThread());
-                _stitchBlocks.add(this._currentStitchBlock);
-            } else {
-                this._currentStitchBlock = this._stitchBlocks.get(0);
-            }
-        }
-        ArrayList<Stitch> stitches = this._currentStitchBlock.getStitches();
-        if (stitches.size() > 0) {
-            Stitch lastStitch = stitches.get(stitches.size()-1);
-            x = lastStitch.x + dx;
-            y = lastStitch.y + dy;
-        } else {
-		/* NOTE: The stitchList is empty, so add it to the HOME position. The embStitchList_create function will ensure the first coordinate is at the HOME position. */
-            Stitch home = new Stitch(0.0, 0.0);
-            x = home.x + dx;
-            y = home.y + dy;
-        }
+        double x = _previousStitch.x + dx;
+        double y = _previousStitch.y + dy;
+        _previousStitch = new Stitch(x, y);
         this.addStitchAbs(x, y, flags, isAutoColorIndex);
     }
 
@@ -111,17 +97,17 @@ public class Pattern {
         double xMultiplier = horizontal ? -1.0 : 1.0;
         double yMultiplier = vertical ? -1.0 : 1.0;
         Pattern newPattern = new Pattern();
-        for(EmbThread thread : this._threadList){
+        for (EmbThread thread : this._threadList) {
             newPattern._threadList.add(new EmbThread(thread));
         }
-        for(StitchBlock sb : this.getStitchBlocks()){
+        for (StitchBlock sb : this.getStitchBlocks()) {
             StitchBlock newStitchBlock = new StitchBlock();
             newPattern.getStitchBlocks().add(newStitchBlock);
             int threadIndex = this._threadList.indexOf(sb.getThread());
             newStitchBlock.setThread(newPattern._threadList.get(threadIndex));
             ArrayList<Stitch> newStitches = newStitchBlock.getStitches();
-            for(Stitch s : sb.getStitches()) {
-                newStitches.add(new Stitch(s.x *xMultiplier, s.y * yMultiplier));
+            for (Stitch s : sb.getStitches()) {
+                newStitches.add(new Stitch(s.x * xMultiplier, s.y * yMultiplier));
             }
         }
         return newPattern;
@@ -131,13 +117,13 @@ public class Pattern {
         _threadList.add(thread);
     }
 
-    public EmbRect calculateBoundingBox(){
+    public EmbRect calculateBoundingBox() {
         double top = Double.MAX_VALUE;
         double left = Double.MAX_VALUE;
         double bottom = Double.MIN_VALUE;
         double right = Double.MIN_VALUE;
-        for(StitchBlock sb : this.getStitchBlocks()){
-            for(Stitch s : sb.getStitches()) {
+        for (StitchBlock sb : this.getStitchBlocks()) {
+            for (Stitch s : sb.getStitches()) {
                 top = Math.min(top, s.y);
                 left = Math.min(left, s.x);
                 bottom = Math.max(bottom, s.y);
@@ -150,19 +136,19 @@ public class Pattern {
     public Pattern getPositiveCoordinatePattern() {
         int moveLeft, moveTop;
         EmbRect boundingRect = this.calculateBoundingBox();
-        moveLeft = (int)boundingRect.left;
-        moveTop = (int)boundingRect.top;
+        moveLeft = (int) boundingRect.left;
+        moveTop = (int) boundingRect.top;
         Pattern newPattern = new Pattern();
-        for(EmbThread thread : this._threadList){
+        for (EmbThread thread : this._threadList) {
             newPattern._threadList.add(new EmbThread(thread));
         }
-        for(StitchBlock sb : this.getStitchBlocks()){
+        for (StitchBlock sb : this.getStitchBlocks()) {
             StitchBlock newStitchBlock = new StitchBlock();
             newPattern.getStitchBlocks().add(newStitchBlock);
             int threadIndex = this._threadList.indexOf(sb.getThread());
             newStitchBlock.setThread(newPattern._threadList.get(threadIndex));
             ArrayList<Stitch> newStitches = newStitchBlock.getStitches();
-            for(Stitch s : sb.getStitches()) {
+            for (Stitch s : sb.getStitches()) {
                 newStitches.add(new Stitch(s.x - moveLeft, s.y - moveTop));
             }
         }
@@ -172,31 +158,35 @@ public class Pattern {
     public Pattern getCenteredPattern() {
         int moveLeft, moveTop;
         EmbRect boundingRect = this.calculateBoundingBox();
-        moveLeft = (int)(boundingRect.left - (boundingRect.getWidth() / 2.0));
-        moveTop = (int)(boundingRect.top - (boundingRect.getHeight() / 2.0));
+        moveLeft = (int) (boundingRect.left - (boundingRect.getWidth() / 2.0));
+        moveTop = (int) (boundingRect.top - (boundingRect.getHeight() / 2.0));
         Pattern newPattern = new Pattern();
-        for(EmbThread thread : this._threadList){
+        for (EmbThread thread : this._threadList) {
             newPattern._threadList.add(new EmbThread(thread));
         }
-        for(StitchBlock sb : this.getStitchBlocks()){
+        for (StitchBlock sb : this.getStitchBlocks()) {
             StitchBlock newStitchBlock = new StitchBlock();
             newPattern.getStitchBlocks().add(newStitchBlock);
             int threadIndex = this._threadList.indexOf(sb.getThread());
             newStitchBlock.setThread(newPattern._threadList.get(threadIndex));
             ArrayList<Stitch> newStitches = newStitchBlock.getStitches();
-            for(Stitch s : sb.getStitches()) {
+            for (Stitch s : sb.getStitches()) {
                 newStitches.add(new Stitch(s.x - moveLeft, s.y - moveTop));
             }
         }
         return newPattern;
     }
 
-    public static IFormatReader getReaderByFilename(String filename){
-       filename = filename.toLowerCase();
-        if(filename.endsWith(".exp")){
+    public static IFormatReader getReaderByFilename(String filename) {
+        filename = filename.toLowerCase();
+        if (filename.endsWith(".exp")) {
             return new FormatExp();
-        }else if(filename.endsWith(".dst")){
+        } else if (filename.endsWith(".dst")) {
             return new FormatDst();
+        } else if (filename.endsWith(".pec")) {
+            return new FormatPec();
+        } else if (filename.endsWith(".pes")) {
+            return new FormatPes();
         }
         return null;
     }

@@ -16,13 +16,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
     private int SELECT_FILE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +37,20 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        if(intent != null && intent.getAction() == "android.intent.action.VIEW"){
-            // download and display file pointed to by "intent.getData()
+        if (intent != null && intent.getAction() == "android.intent.action.VIEW") {
+            try {
+                Pattern p = ReadFromUri(intent.getData());
+                DrawView drawView = new DrawView(this, p);
+                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.mainContentArea);
+                relativeLayout.addView(drawView);
+
+            } catch (FileNotFoundException ex) {
+
+            }
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if(fab != null) {
+        if (fab != null) {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -73,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
+    //    @Override
 //    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 //        switch (requestCode) {
 //            case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
@@ -91,32 +103,38 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE) {
-                onSelectFromGalleryResult(data);
+                onSelectFileResult(data);
             }
         }
     }
 
-    private void onSelectFromGalleryResult(Intent data) {
-        try {
-            Uri uri = data.getData();
-            Cursor returnCursor =
-                    getContentResolver().query(uri, null, null, null, null);
-            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            returnCursor.moveToFirst();
-            String filename = returnCursor.getString(nameIndex);
-            IFormatReader formatReader = Pattern.getReaderByFilename(filename);
-            if(formatReader != null) {
-                InputStream is = getContentResolver().openInputStream(data.getData());
+    private void onSelectFileResult(Intent data) {
 
-                DataInputStream in = new DataInputStream(is);
-                Pattern p = formatReader.Read(in);
+            try {
+                Uri uri = data.getData();
+                Pattern p = ReadFromUri(uri);
                 DrawView drawView = new DrawView(this, p);
                 RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.mainContentArea);
                 relativeLayout.addView(drawView);
-            }
-        }
-        catch (FileNotFoundException ex){
+
+        } catch (FileNotFoundException ex) {
 
         }
+    }
+
+    private Pattern ReadFromUri(Uri uri) throws FileNotFoundException {
+        Cursor returnCursor =
+                getContentResolver().query(uri, null, null, null, null);
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        returnCursor.moveToFirst();
+        String filename = returnCursor.getString(nameIndex);
+        IFormatReader formatReader = Pattern.getReaderByFilename(filename);
+        if (formatReader != null) {
+            InputStream is = getContentResolver().openInputStream(uri);
+            DataInputStream in = new DataInputStream(is);
+            Pattern p = formatReader.Read(in);
+            return p;
+        }
+        return null;
     }
 }

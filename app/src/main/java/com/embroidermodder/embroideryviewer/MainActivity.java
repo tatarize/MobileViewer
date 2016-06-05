@@ -2,10 +2,12 @@ package com.embroidermodder.embroideryviewer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.OpenableColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -95,14 +97,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSelectFromGalleryResult(Intent data) {
-        FormatDst dst = new FormatDst();
         try {
-            InputStream is = getContentResolver().openInputStream(data.getData());
-            DataInputStream in = new DataInputStream(is);
-            Pattern p = dst.Read(in);
-            DrawView drawView = new DrawView(this, p);
-            RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.mainContentArea);
-            relativeLayout.addView(drawView);
+            Uri uri = data.getData();
+            Cursor returnCursor =
+                    getContentResolver().query(uri, null, null, null, null);
+            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            returnCursor.moveToFirst();
+            String filename = returnCursor.getString(nameIndex);
+            IFormatReader formatReader = Pattern.getReaderByFilename(filename);
+            if(formatReader != null) {
+                InputStream is = getContentResolver().openInputStream(data.getData());
+
+                DataInputStream in = new DataInputStream(is);
+                Pattern p = formatReader.Read(in);
+                DrawView drawView = new DrawView(this, p);
+                RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.mainContentArea);
+                relativeLayout.addView(drawView);
+            }
         }
         catch (FileNotFoundException ex){
 

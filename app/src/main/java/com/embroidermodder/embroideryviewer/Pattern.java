@@ -190,4 +190,14 @@ public class Pattern {
         }
         return newPattern;
     }
+
+    public static IFormatReader getReaderByFilename(String filename){
+       filename = filename.toLowerCase();
+        if(filename.endsWith(".exp")){
+            return new FormatExp();
+        }else if(filename.endsWith(".dst")){
+            return new FormatDst();
+        }
+        return null;
+    }
 }

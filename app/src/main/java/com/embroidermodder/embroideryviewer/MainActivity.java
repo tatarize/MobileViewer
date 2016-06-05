@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 public class MainActivity extends AppCompatActivity {
 
     private int SELECT_FILE = 1;
+    private Intent _intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,21 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(Intent.createChooser(intent, "Open folder"), SELECT_FILE);
                 }
             });
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        if(null != this._intent) {
+            outState.putParcelable("intent", this._intent);
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceState (Bundle savedInstanceState) {
+        if(null != savedInstanceState && savedInstanceState.containsKey("intent")) {
+            Intent intent = (Intent)savedInstanceState.getParcelable("intent");
+            onSelectFileResult(intent);
         }
     }
 
@@ -111,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     private void onSelectFileResult(Intent data) {
 
             try {
+                this._intent = data;
                 Uri uri = data.getData();
                 Pattern p = ReadFromUri(uri);
                 DrawView drawView = new DrawView(this, p);

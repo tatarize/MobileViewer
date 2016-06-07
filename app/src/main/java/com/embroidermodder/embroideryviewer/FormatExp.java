@@ -5,7 +5,15 @@ import java.io.IOException;
 
 public class FormatExp implements IFormatReader {
 
-    public Pattern Read(DataInputStream stream) {
+    public boolean hasColor() {
+        return false;
+    }
+
+    public boolean hasStitches() {
+        return true;
+    }
+
+    public Pattern read(DataInputStream stream) {
         Pattern p = new Pattern();
         byte b0, b1;
         try {

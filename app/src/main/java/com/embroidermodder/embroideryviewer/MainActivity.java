@@ -3,7 +3,6 @@ package com.embroidermodder.embroideryviewer;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,12 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -149,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         if (formatReader != null) {
             InputStream is = getContentResolver().openInputStream(uri);
             DataInputStream in = new DataInputStream(is);
-            Pattern p = formatReader.Read(in);
+            Pattern p = formatReader.read(in);
             return p;
         }
         return null;

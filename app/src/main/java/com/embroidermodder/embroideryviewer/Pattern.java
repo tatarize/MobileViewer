@@ -20,6 +20,8 @@ public class Pattern {
         return _stitchBlocks;
     }
 
+    public ArrayList<EmbThread> getThreadList(){ return _threadList; }
+
     public String getFilename() {
         return _filename;
     }
@@ -72,8 +74,10 @@ public class Pattern {
             this._currentStitchBlock = sb;
             sb.setThread(this._threadList.get(threadIndex));
             this.getStitchBlocks().add(sb);
+            return;
         }
         Stitch s = new Stitch(x, y);
+        _previousStitch = s;
         this._currentStitchBlock.getStitches().add(s);
     }
 
@@ -82,7 +86,7 @@ public class Pattern {
     public void addStitchRel(double dx, double dy, int flags, boolean isAutoColorIndex) {
         double x = _previousStitch.x + dx;
         double y = _previousStitch.y + dy;
-        _previousStitch = new Stitch(x, y);
+
         this.addStitchAbs(x, y, flags, isAutoColorIndex);
     }
 
@@ -179,10 +183,14 @@ public class Pattern {
 
     public static IFormatReader getReaderByFilename(String filename) {
         filename = filename.toLowerCase();
-        if (filename.endsWith(".exp")) {
+        if (filename.endsWith(".col")) {
+            return new FormatCol();
+        } else if (filename.endsWith(".exp")) {
             return new FormatExp();
         } else if (filename.endsWith(".dst")) {
             return new FormatDst();
+        } else if (filename.endsWith(".pcs")) {
+            return new FormatPcs();
         } else if (filename.endsWith(".pec")) {
             return new FormatPec();
         } else if (filename.endsWith(".pes")) {

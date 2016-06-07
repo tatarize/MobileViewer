@@ -5,6 +5,14 @@ import java.io.IOException;
 
 public class FormatDst implements IFormatReader {
 
+    public boolean hasColor() {
+        return false;
+    }
+
+    public boolean hasStitches() {
+        return true;
+    }
+
     private int decodeFlags(byte b) {
         int returnCode = 0;
         if (b == 0xF3) {
@@ -19,7 +27,7 @@ public class FormatDst implements IFormatReader {
         return returnCode;
     }
 
-    public Pattern Read(DataInputStream stream) {
+    public Pattern read(DataInputStream stream) {
         Pattern p = new Pattern();
         byte[] b = new byte[3];
 

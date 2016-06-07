@@ -38,7 +38,7 @@ public class DrawView extends View {
         _paint.setStyle(Paint.Style.STROKE);
         EmbRect embRect = pattern.calculateBoundingBox();
         float scale = (float)Math.min(_height/embRect.getHeight(), _width/embRect.getWidth());
-        _paint.setStrokeWidth(scale/10.0f);
+        _paint.setStrokeWidth(scale/9.0f);
         for(StitchBlock stitchBlock : pattern.getStitchBlocks()){
             int color = stitchBlock.getThread().getColor().getAndroidColor();
             _paint.setColor(color);

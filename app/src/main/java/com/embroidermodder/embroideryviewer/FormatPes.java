@@ -5,7 +5,13 @@ import java.io.IOException;
 
 public class FormatPes implements IFormatReader {
 
-    public Pattern Read(DataInputStream stream) {
+    public boolean hasColor() {
+        return true;
+    }
+
+    public boolean hasStitches() { return true; }
+
+    public Pattern read(DataInputStream stream) {
         Pattern p = new Pattern();
         try {
             stream.skip(8);

@@ -7,12 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.OpenableColumns;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import java.io.DataInputStream;
@@ -44,19 +42,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (FileNotFoundException ex) {
 
             }
-        }
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    Uri uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
-                    intent.setDataAndType(uri, "*/*");
-                    startActivityForResult(Intent.createChooser(intent, "Open folder"), SELECT_FILE);
-                }
-            });
         }
     }
 
@@ -91,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_open_file) {
+
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            Uri uri = Uri.parse(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString());
+            intent.setDataAndType(uri, "*/*");
+            startActivityForResult(Intent.createChooser(intent, "Open folder"), SELECT_FILE);
+
             return true;
         }
 
